@@ -1,0 +1,98 @@
+package com.example.hashgenerato;
+
+package com.example.hashgenerato;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Random;
+
+public class DestinationHashGenerator {
+    public static void main(String[] args) {
+        if (args.length < 2) {
+            System.out.println("Usage: java -jar DestinationHashGenerator.jar <PRN> <JSON_FILE_PATH>");
+            return;
+        }
+
+        String prn = args[0].toLowerCase(); // Convert PRN to lowercase
+        String jsonFilePath = args[1];
+
+        try {
+            // Parse JSON file
+            JsonObject jsonObject = JsonParser.parseReader(new FileReader(jsonFilePath)).getAsJsonObject();
+            // Find the destination value
+            JsonElement destinationElement = findDestination(jsonObject);
+            if (destinationElement == null) {
+                System.out.println("Destination key not found in the JSON file.");
+                return;
+            }
+            String destinationValue = destinationElement.getAsString();
+
+            // Generate random alphanumeric string
+            String randomString = getRandomString();
+
+            // Concatenate PRN, destination value, and random string
+            String concatenatedString = prn + destinationValue + randomString;
+
+            // Generate MD5 hash
+            String md5Hash = getMD5Hash(concatenatedString);
+
+            // Output in the format <hash>;<random string>
+            System.out.println(md5Hash + ";" + randomString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static JsonElement findDestination(JsonObject jsonObject) {
+        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+            if (entry.getKey().equals("destination")) {
+                return entry.getValue();
+            }
+            if (entry.getValue().isJsonObject()) {
+                JsonElement result = findDestination(entry.getValue().getAsJsonObject());
+                if (result != null) {
+                    return result;
+                }
+            }
+            if (entry.getValue().isJsonArray()) {
+                for (JsonElement element : entry.getValue().getAsJsonArray()) {
+                    if (element.isJsonObject()) {
+                        JsonElement result = findDestination(element.getAsJsonObject());
+                        if (result != null) {
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String getRandomString() {
+        int length = 8;
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return sb.toString();
+    }
+
+    private static String getMD5Hash(String input) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+}
+

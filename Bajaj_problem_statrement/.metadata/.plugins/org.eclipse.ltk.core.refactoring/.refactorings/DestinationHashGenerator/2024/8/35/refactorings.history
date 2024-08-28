@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;com.example.hashgenerato&apos; to &apos;com.example.hashgenerator&apos;&#x0D;&#x0A;- Original project: &apos;DestinationHashGenerator&apos;&#x0D;&#x0A;- Original element: &apos;DestinationHashGenerator/src/com.example.hashgenerato&apos;&#x0D;&#x0A;- Renamed element: &apos;DestinationHashGenerator/src/com.example.hashgenerator&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;com.example.hashgenerato&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;com.example.hashgenerato" name="com.example.hashgenerator" qualified="false" references="true" stamp="1724858852680" textual="false" version="1.0"/>
+</session>
